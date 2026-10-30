@@ -1,6 +1,6 @@
 # 01 · Feasibility: replacing the HyperOS 2 charging animation
 
-> **历史归档（ARCHIVED）**：本文记录的是上游项目基于 libxposed API 102 的 Xposed 模块方案（Hook SystemUI、替换 HyperOS 充电动画）。本仓库已转向鸿蒙 / EMUI 免 root 独立模式，**该方案的全部代码（Xposed 入口、HyperOS / OxygenOS 适配器、系统窗口控制器）均已删除**，文中类名、Hook 点、构建设置、设备数据不再对应当前代码，请勿据此排障。当前说明见根目录 [README](../README.md) 与 [docs/README](README.md)。仅时间轴 / 视觉规格移植一节（Stage 2）与现存的 `core/timeline/`、`ui/EndfieldHudView.kt` 仍同源，可作设计背景参考。
+> **历史归档（ARCHIVED）**：本文记录的是上游项目基于 libxposed API 102 的 Xposed 模块方案（Hook SystemUI、替换 HyperOS 充电动画）。本仓库已转向鸿蒙 / EMUI 免 root 独立模式，**该方案的全部代码（Xposed 入口、HyperOS / OxygenOS 适配器、系统窗口控制器）均已删除**，文中类名、Hook 点、构建设置、设备数据不再对应当前代码，请勿据此排障。当前说明见仓库根目录 [README](../../README.md) 与 [docs/README](README.md)。仅时间轴 / 视觉规格移植一节（Stage 2）与现存的 `core/timeline/`、`ui/EndfieldHudView.kt` 仍同源，可作设计背景参考。
 
 Status: **confirmed**, stage 0 and stage 1 implemented and verified on hardware.
 Date of measurements: see device facts below.

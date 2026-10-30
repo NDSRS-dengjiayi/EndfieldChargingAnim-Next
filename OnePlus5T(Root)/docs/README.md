@@ -2,7 +2,7 @@
 
 本目录的两份文档是**上游 Xposed 时代的逆向分析归档，描述的代码已从本仓库移除**。
 
-当前版本是免 root 的鸿蒙 / EMUI 独立模式，工作原理与使用方式见根目录 [README](../README.md)。当前代码中：
+当前版本是面向一加 5T（H2OS 10.0.2 / Android 10）的 root 独立模式，工作原理与使用方式见仓库根目录 [README](../../README.md)。当前代码中：
 
 - 没有 Xposed 模块入口（原 `ModuleEntry.kt`、`META-INF/xposed/*` 已删除）；
 - 没有任何 ROM 适配器（原 `rom/hyperos`、`rom/oxygenos` 已删除）；

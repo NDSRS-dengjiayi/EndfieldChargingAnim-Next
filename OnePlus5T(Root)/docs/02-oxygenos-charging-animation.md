@@ -1,6 +1,6 @@
 # 02 · OnePlus 15 (OxygenOS 16) charging animation
 
-> **历史归档（ARCHIVED）**：本文记录的是上游 Xposed 模块时代对 OxygenOS 16 充电动画的逆向分析与适配器设计。本仓库已转向鸿蒙 / EMUI 免 root 独立模式，**OxygenOS 适配器及全部 Xposed / Hook 代码均已删除**，文中类名、Hook 点、设备数据不再对应当前代码，请勿据此排障。当前说明见根目录 [README](../README.md) 与 [docs/README](README.md)。
+> **历史归档（ARCHIVED）**：本文记录的是上游 Xposed 模块时代对 OxygenOS 16 充电动画的逆向分析与适配器设计。本仓库已转向鸿蒙 / EMUI 免 root 独立模式，**OxygenOS 适配器及全部 Xposed / Hook 代码均已删除**，文中类名、Hook 点、设备数据不再对应当前代码，请勿据此排障。当前说明见仓库根目录 [README](../../README.md) 与 [docs/README](README.md)。
 
 Status: adapter implemented and verified on hardware for the AOSP wired ripple; the OPPO
 full-screen animation is implemented but not yet exercised (see [Open items](#open-items)).
