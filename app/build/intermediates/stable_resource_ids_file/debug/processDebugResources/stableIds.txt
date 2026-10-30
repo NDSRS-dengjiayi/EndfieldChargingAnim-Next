@@ -1,3 +1,0 @@
-com.lemoneko.endfieldcharge:style/Theme.EndfieldCharge.Standalone = 0x7f020000
-com.lemoneko.endfieldcharge:string/app_name = 0x7f010001
-com.lemoneko.endfieldcharge:string/app_description = 0x7f010000

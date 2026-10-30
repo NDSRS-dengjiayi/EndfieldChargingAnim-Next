@@ -1,7 +1,0 @@
-com.lemoneko.endfieldcharge.app-pngs-0 D:\DJY\BC\and\EndfieldChargingAnim\app\build\generated\res\pngs\release
-com.lemoneko.endfieldcharge.app-resValues-1 D:\DJY\BC\and\EndfieldChargingAnim\app\build\generated\res\resValues\release
-com.lemoneko.endfieldcharge.app-packageReleaseResources-2 D:\DJY\BC\and\EndfieldChargingAnim\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
-com.lemoneko.endfieldcharge.app-packageReleaseResources-3 D:\DJY\BC\and\EndfieldChargingAnim\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
-com.lemoneko.endfieldcharge.app-release-4 D:\DJY\BC\and\EndfieldChargingAnim\app\build\intermediates\merged_res\release\mergeReleaseResources
-com.lemoneko.endfieldcharge.app-main-5 D:\DJY\BC\and\EndfieldChargingAnim\app\src\main\res
-com.lemoneko.endfieldcharge.app-release-6 D:\DJY\BC\and\EndfieldChargingAnim\app\src\release\res

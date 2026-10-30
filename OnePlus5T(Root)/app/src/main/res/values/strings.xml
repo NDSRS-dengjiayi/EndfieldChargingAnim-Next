@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Endfield Charge (Root)</string>
+    <string name="app_description">Plays the Endfield-style super-charge HUD on charger plug/unplug. Rooted build for the OnePlus 5T: boot auto-start and su-based permission grants.</string>
+</resources>

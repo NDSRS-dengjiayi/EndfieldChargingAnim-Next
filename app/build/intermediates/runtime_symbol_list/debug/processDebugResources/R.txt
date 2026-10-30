@@ -1,3 +1,0 @@
-int string app_description 0x7f010000
-int string app_name 0x7f010001
-int style Theme_EndfieldCharge_Standalone 0x7f020000

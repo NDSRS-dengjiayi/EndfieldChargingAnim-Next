@@ -1,1 +1,0 @@
-http://schemas.android.com/apk/res-auto;;${\:app*release*MAIN*sourceProvider*0*resDir*0}/values/strings.xml,+string:app_name,0,V400020039,3400020069,;"Endfield Charge";xposed_description,0,V40003006f,7c000300e7,;"Replaces the ROM charging animation with the Endfield-style super-charge HUD.";
