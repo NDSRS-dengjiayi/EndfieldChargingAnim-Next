@@ -28,6 +28,7 @@ object ChargeEvents {
         Thread(runnable, "charge-events").apply { isDaemon = true }
     }
 
+    @Synchronized
     fun handle(context: Context, action: String?) {
         val now = System.currentTimeMillis()
         if (action == lastAction && now - lastActionAt < DEBOUNCE_MS) {
@@ -38,6 +39,9 @@ object ChargeEvents {
         lastActionAt = now
 
         val app = context.applicationContext
+        // A charger event proves the process is alive, so make sure the persistent monitor is too:
+        // if the ROM killed the service since boot, the next event would otherwise have no receiver.
+        if (StandalonePrefs.isEnabled(app)) StandaloneMonitorService.start(app)
         worker.execute { dispatch(app, action) }
     }
 

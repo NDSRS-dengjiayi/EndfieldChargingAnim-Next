@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
+import android.os.BatteryManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -17,18 +18,44 @@ import com.lemoneko.endfieldcharge.ui.MainActivity
 
 /**
  * Persistent foreground service that keeps the process unfrozen and registers the charger
- * receiver dynamically.
+ * receivers dynamically.
  *
- * Why this exists: on EMUI/HarmonyOS the iaware power manager drops implicit broadcasts (including
- * ACTION_POWER_CONNECTED) for frozen background apps, so a manifest receiver alone is never woken.
- * A foreground service process is exempt from freezing, its dynamic receiver is delivered to a live
- * process synchronously, and the service is also allowed to start activities from the background.
+ * Why this exists: ROMs may drop implicit broadcasts (including ACTION_POWER_CONNECTED) for a
+ * frozen background app, so a manifest receiver alone is not reliable. A foreground service
+ * process is exempt from freezing, and its dynamic receiver is delivered to a live process.
+ *
+ * Two event sources are registered here:
+ *
+ * * `ACTION_POWER_CONNECTED` / `ACTION_POWER_DISCONNECTED` - the normal, documented signals.
+ * * `ACTION_BATTERY_CHANGED` - some vendor ROMs (including H2OS) only surface the plug through the
+ *   `EXTRA_PLUGGED` extra of the sticky battery broadcast. The plugged flag is edge-detected here
+ *   and turned into the same CHARGE / UNPLUG events, so both ROM behaviours end up in one path.
  */
 class StandaloneMonitorService : Service() {
 
-    private val receiver = object : BroadcastReceiver() {
+    /** Previous `EXTRA_PLUGGED` value; `null` until the first battery broadcast seeds it. */
+    private var lastPlugged: Int? = null
+
+    private val powerReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             ChargeEvents.handle(context.applicationContext, intent.action)
+        }
+    }
+
+    private val batteryReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0)
+            val previous = lastPlugged
+            lastPlugged = plugged
+            if (previous == null || previous == plugged) return
+
+            val action = if (plugged != 0) {
+                Intent.ACTION_POWER_CONNECTED
+            } else {
+                Intent.ACTION_POWER_DISCONNECTED
+            }
+            Log.i(TAG, "battery broadcast plugged=$previous->$plugged, synthesised $action")
+            ChargeEvents.handle(context.applicationContext, action)
         }
     }
 
@@ -36,23 +63,28 @@ class StandaloneMonitorService : Service() {
         super.onCreate()
         startAsForeground()
 
-        val filter = IntentFilter().apply {
+        val powerFilter = IntentFilter().apply {
             addAction(Intent.ACTION_POWER_CONNECTED)
             addAction(Intent.ACTION_POWER_DISCONNECTED)
         }
+        val batteryFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+
         // System-only broadcasts; never exported from other apps.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            registerReceiver(powerReceiver, powerFilter, Context.RECEIVER_NOT_EXPORTED)
+            registerReceiver(batteryReceiver, batteryFilter, Context.RECEIVER_NOT_EXPORTED)
         } else {
-            registerReceiver(receiver, filter)
+            registerReceiver(powerReceiver, powerFilter)
+            registerReceiver(batteryReceiver, batteryFilter)
         }
-        Log.i(TAG, "monitor service started, receiver registered")
+        Log.i(TAG, "monitor service started, receivers registered")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
 
     override fun onDestroy() {
-        runCatching { unregisterReceiver(receiver) }
+        runCatching { unregisterReceiver(powerReceiver) }
+        runCatching { unregisterReceiver(batteryReceiver) }
         Log.i(TAG, "monitor service destroyed")
         super.onDestroy()
     }
@@ -100,13 +132,19 @@ class StandaloneMonitorService : Service() {
         private const val CHANNEL_ID = "standalone_monitor"
         private const val NOTIFICATION_ID = 2001
 
+        /**
+         * Starts (or keeps) the monitor. Safe to call from any component: repeated calls while it
+         * already runs only re-deliver [onStartCommand].
+         */
         fun start(context: Context) {
             val intent = Intent(context, StandaloneMonitorService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
+            runCatching {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            }.onFailure { Log.w(TAG, "monitor start refused", it) }
         }
 
         fun stop(context: Context) {

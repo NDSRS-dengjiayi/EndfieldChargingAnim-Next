@@ -135,6 +135,10 @@ class MainActivity : Activity() {
         if (intent?.getBooleanExtra(EXTRA_RENDER_SHEETS, false) == true) {
             renderSheets()
         }
+
+        // Opening the app re-applies the app-ops and the Magisk boot hook, so an upgrade, a ROM
+        // update or a permission reset cannot silently leave the monitor disarmed.
+        if (StandalonePrefs.isEnabled(this)) grantViaRoot(quiet = true)
     }
 
     override fun onDestroy() {
@@ -313,6 +317,9 @@ class MainActivity : Activity() {
                         grantViaRoot(quiet = true)
                     } else {
                         StandaloneMonitorService.stop(this@MainActivity)
+                        RootShell.removeBootHookAsync { summary ->
+                            runOnUiThread { status.text = summary }
+                        }
                     }
                 }
             },
@@ -380,9 +387,11 @@ class MainActivity : Activity() {
                 setTextColor(Color.LTGRAY)
                 textSize = 11f
                 setPadding((16 * density).toInt(), (8 * density).toInt(), (16 * density).toInt(), 0)
-                text = "Rooted build: the monitor runs as a foreground service and is restarted after " +
-                    "every reboot, so charging plays even when this app was never opened. The two " +
-                    "grants above are applied through su; without root, grant them by hand."
+                text = "Rooted build: the switch is on by default and the monitor runs as a " +
+                    "foreground service. su grants the overlay, Doze, background-run app-ops and " +
+                    "installs a Magisk boot hook (/data/adb/service.d), so charging plays after " +
+                    "every reboot even when this app was never opened. Turning the switch off " +
+                    "stops the service and removes the hook."
             },
         )
     }

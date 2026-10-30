@@ -4,17 +4,19 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import com.lemoneko.endfieldcharge.core.HudPlayMode
 import com.lemoneko.endfieldcharge.root.RootShell
 
 /**
- * Brings up the standalone HUD: a direct activity start first, then `am start` through root, then a
- * full-screen-intent notification as the last resort.
+ * Brings up the standalone HUD, in the order that is most likely to work on this device.
  *
- * On the OnePlus 5T (Android 8) background activity starts are not restricted, so the direct path
- * is normally enough. The root path covers ROMs and future Android versions that refuse it, and
- * keeps the "the HUD always shows on plug" promise without needing the overlay permission.
+ * Android 10 refuses background activity starts *silently* (no exception is thrown) unless the app
+ * holds `SYSTEM_ALERT_WINDOW`. So when the overlay app-op is missing the direct path cannot work
+ * and is skipped: `am start` as uid 0 goes first, and a full-screen-intent notification is the last
+ * resort. When the overlay permission is present (rooted installs grant it through `appops`), the
+ * direct start is the normal path because the system explicitly allows it.
  */
 object StandaloneLauncher {
 
@@ -31,7 +33,21 @@ object StandaloneLauncher {
         } else {
             true
         }
-        Log.i(TAG, "launch mode=$mode fsiAllowed=$fsiAllowed")
+        val canOverlay = Settings.canDrawOverlays(context)
+        Log.i(TAG, "launch mode=$mode fsiAllowed=$fsiAllowed canOverlay=$canOverlay")
+
+        if (!canOverlay) {
+            // Direct start would be dropped without any error, so the rooted path is the only
+            // reliable way to show the HUD from the background.
+            if (RootShell.startHud(context, mode.name)) {
+                Log.i(TAG, "root launch succeeded (no overlay permission)")
+                StandaloneNotifier.cancel(context)
+                return
+            }
+            Log.w(TAG, "root launch unavailable, falling back to the FSI notification")
+            StandaloneNotifier.show(context, mode)
+            return
+        }
 
         val directError = try {
             context.startActivity(intent)
@@ -40,9 +56,6 @@ object StandaloneLauncher {
             t
         }
         if (directError == null) {
-            // No exception does NOT guarantee the activity became visible on Android 10+, where the
-            // system may silently deny a background start. This build runs on Android 8, so an
-            // exception-free start is the normal, visible path.
             Log.i(TAG, "startActivity returned without exception")
             StandaloneNotifier.cancel(context)
             return

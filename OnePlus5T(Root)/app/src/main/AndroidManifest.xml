@@ -39,6 +39,16 @@
             android:theme="@style/Theme.EndfieldCharge.Standalone"
             android:turnScreenOn="true" />
 
+        <!-- Headless entry point for the Magisk boot hook: a root shell cannot start the
+             non-exported monitor service, but it can start this exported, windowless activity. -->
+        <activity
+            android:name=".standalone.BootProxyActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay" />
+
         <!-- Protected system broadcasts, deliverable to manifest receivers. -->
         <receiver
             android:name=".standalone.ChargeEventReceiver"

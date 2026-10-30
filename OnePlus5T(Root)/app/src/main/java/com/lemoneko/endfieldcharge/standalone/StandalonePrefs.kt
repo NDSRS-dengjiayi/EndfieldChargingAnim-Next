@@ -24,7 +24,13 @@ object StandalonePrefs {
     private const val MIN_CAPACITY_MAH = 500
     private const val MAX_CAPACITY_MAH = 20_000
 
-    fun isEnabled(context: Context): Boolean = prefs(context).getBoolean(KEY_ENABLED, false)
+    /**
+     * The rooted build exists to play the animation on every plug, so the monitor is armed from the
+     * first launch; the switch is now an opt-out rather than an opt-in.
+     */
+    private const val DEFAULT_ENABLED = true
+
+    fun isEnabled(context: Context): Boolean = prefs(context).getBoolean(KEY_ENABLED, DEFAULT_ENABLED)
 
     fun setEnabled(context: Context, value: Boolean) {
         prefs(context).edit().putBoolean(KEY_ENABLED, value).apply()
