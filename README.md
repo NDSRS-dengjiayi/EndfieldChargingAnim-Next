@@ -19,8 +19,6 @@
 - **[NingmengLemon/EndfieldChargingAnim](https://github.com/NingmengLemon/EndfieldChargingAnim)** —— 代码基础。原项目是基于 libxposed API 102 的 Xposed 模块，通过 Hook SystemUI 替换 ROM 充电动画。**本改编版已移除全部 Xposed / Hook 代码**，原项目的逆向分析资料作为历史归档保留在 [Harmony/docs/](Harmony/docs/README.md)。
 - **[QinAnze/zmd-charge](https://github.com/QinAnze/zmd-charge)** —— 视觉规格来源（Avalonia 桌面端）。胶囊几何形状、配色、16 条动画轨道与每一个 cubic-bezier 控制点均以该项目源码为规格移植。
 
-> Fully Powered by DeepSeek V4.1 Flash.
-
 ## 效果
 
 - **插入充电**：完整三态动画——闪电图标弹出、胶囊撑高为圆角矩形显示「超充模式」、涟漪扩散、标题与电量数字依次呈现、停留后整体缩小收回
@@ -175,6 +173,8 @@ app/src/main/java/com/lemoneko/endfieldcharge/
   ui/                          EndfieldHudView 渲染器、HudStrings、HudTypefaces、MainActivity
   debug/                       FrameSheetRenderer（离屏逐帧渲染 PNG）
 app/src/main/assets/fonts/     Inter-Variable.ttf（SIL OFL）
+app/src/main/res/mipmap-anydpi-v26/  自适应启动图标（前景 drawable/ic_launcher_foreground.xml，
+                                     设计源稿为仓库根目录 ic_launcher.svg）
 app/src/test/                  JVM 单元测试（时间轴不变量、设置 JSON）
 docs/                          上游 Xposed 时代的逆向分析（历史归档，见 docs/README.md）
 tools/capture-reference-hud.ps1  逐帧抓取桌面参考实现画面做 A/B 对比（Windows）

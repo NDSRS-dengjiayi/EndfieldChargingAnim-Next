@@ -1,0 +1,15 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Design source: ic_launcher.svg at the repository root. -->
+    <path
+        android:pathData="M54,24 A30,30 0 1,0 54,84 A30,30 0 1,0 54,24 Z"
+        android:fillColor="#00000000"
+        android:strokeColor="#E9E7E4"
+        android:strokeWidth="5" />
+    <path
+        android:pathData="M37.5,21 L37.5,63.9 L47.4,63.9 L47.4,87 L70.5,47.4 L57.3,47.4 L70.5,21 Z"
+        android:fillColor="#C6CA4C" />
+</vector>
